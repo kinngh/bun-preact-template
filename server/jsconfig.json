@@ -4,8 +4,7 @@
     "paths": {
       "@/*": ["./*"],
       "@/utils": ["./utils/*"],
-      "@/components": ["./components/*"],
-      "@/hooks": ["./components/hooks/*"]
+      "@/routes": ["./routes/*"]
     },
     "types": ["@types/bun", "@types/node"]
   }

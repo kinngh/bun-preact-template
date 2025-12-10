@@ -1,0 +1,17 @@
+datasource db {
+  provider     = "mysql"
+  relationMode = "prisma"
+  url          = env("DATABASE_URL")
+}
+
+generator kysely {
+  provider     = "prisma-kysely"
+  output       = "./ky"
+  fileName     = "types.ts"
+  enumFileName = "enums.ts"
+}
+
+model placeholder_model {
+  id   String @id @default(dbgenerated("(uuid())"))
+  text String @db.Text
+}

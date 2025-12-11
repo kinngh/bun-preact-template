@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { pathToFileURL } from "url";
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 /**
  * @typedef {"GET" | "POST" | "PUT" | "DELETE" | "PATCH"} HttpMethod
@@ -21,6 +21,8 @@ const PORT = process.env.PORT || 3000;
 
 /** @type {Routes} */
 const routes = { GET: {}, POST: {}, PUT: {}, DELETE: {}, PATCH: {} };
+
+// ----- ROUTE REGISTRATION
 
 const routeRoot = path.join(process.cwd(), "routes");
 
@@ -69,6 +71,8 @@ async function register(dir, routeBase = "") {
 
 await register(routeRoot);
 
+// ----- MIDDLEWARE COMPOSER
+
 /**
  * Wrap a route handler with one or more middleware functions.
  *
@@ -100,6 +104,8 @@ export function withMiddleware(...fns) {
     return final;
   };
 }
+
+// ----- ROUTE MATCHING
 
 /**
  * Match a request path and method to a registered route, preferring
@@ -146,6 +152,85 @@ function matchRoute(pathStr, method) {
   return { handler: null, params: {} };
 }
 
+// ----- STATIC FRONTEND / SPA SETUP
+
+// Vite Preact build output: client/dist
+const CLIENT_DIST_DIR = path.join(process.cwd(), "client", "dist");
+const INDEX_HTML_PATH = path.join(CLIENT_DIST_DIR, "index.html");
+
+/** Very small mime map for common frontend assets. */
+const MIME_TYPES = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".ttf": "font/ttf",
+};
+
+/**
+ * Check if a path is a real file.
+ *
+ * @param {string} filePath
+ * @returns {Promise<boolean>}
+ */
+async function fileExists(filePath) {
+  try {
+    const stat = await fs.stat(filePath);
+    return stat.isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Serve a static asset from client/dist if it exists.
+ *
+ * @param {string} pathname
+ * @returns {Promise<Response | null>}
+ */
+async function serveStaticAsset(pathname) {
+  const safePath = pathname.replace(/^\/+/, "");
+  const filePath =
+    safePath === "" ? INDEX_HTML_PATH : path.join(CLIENT_DIST_DIR, safePath);
+
+  if (!(await fileExists(filePath))) return null;
+
+  const ext = path.extname(filePath);
+  const mime = MIME_TYPES[ext] || "application/octet-stream";
+
+  const file = Bun.file(filePath);
+  return new Response(file, {
+    headers: {
+      "Content-Type": mime,
+    },
+  });
+}
+
+/**
+ * Serve the SPA index.html (for client-side routing).
+ *
+ * @returns {Promise<Response>}
+ */
+async function serveIndexHtml() {
+  const file = Bun.file(INDEX_HTML_PATH);
+  return new Response(file, {
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+    },
+  });
+}
+
+// ----- BUN SERVER
+
 serve({
   port: PORT,
   /**
@@ -156,18 +241,41 @@ serve({
    */
   async fetch(req) {
     try {
-      /** @type {HttpMethod} */
-      const method = /** @type {HttpMethod} */ (req.method);
-      const { pathname } = new URL(req.url);
+      const url = new URL(req.url);
+      const pathname = url.pathname;
 
-      const { handler, params } = matchRoute(pathname, method);
-      // Attach params to the request (Bun's Request is still an object)
-      // eslint-disable-next-line no-extra-semi
-      /** @type {any} */ (req).params = params;
+      /** @type {string} */
+      const rawMethod = req.method.toUpperCase();
+      /** @type {HttpMethod | null} */
+      const method =
+        rawMethod === "GET" ||
+        rawMethod === "POST" ||
+        rawMethod === "PUT" ||
+        rawMethod === "DELETE" ||
+        rawMethod === "PATCH"
+          ? /** @type {HttpMethod} */ (rawMethod)
+          : null;
 
-      if (!handler) return new Response("Not found", { status: 404 });
+      // 1) Try registered routes first
+      if (method) {
+        const { handler, params } = matchRoute(pathname, method);
+        if (handler) {
+          /** @type {any} */ (req).params = params;
+          return await handler(req);
+        }
+      }
 
-      return await handler(req);
+      // 2) For GET/HEAD, try static assets, then SPA index.html
+      if (rawMethod === "GET" || rawMethod === "HEAD") {
+        const assetResponse = await serveStaticAsset(pathname);
+        if (assetResponse) return assetResponse;
+
+        // SPA catch-all: anything not matched and not a static asset
+        return await serveIndexHtml();
+      }
+
+      // 3) Non-GET/HEAD with no route -> 404
+      return new Response("Not found", { status: 404 });
     } catch (err) {
       console.error(err);
       return new Response("Internal Server Error", { status: 500 });

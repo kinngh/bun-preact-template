@@ -11,6 +11,6 @@
 
 ## Client
 
-TBD
-
 - Preact
+- Routing: `preact-iso` + helper functions for page based routing
+  - I really like the `const router = useRouter()` style that I'm used to with `push()` and other related methods, so writing a small layer to enable scanning `src/pages/` and using file based routing was a fun little thing to do.

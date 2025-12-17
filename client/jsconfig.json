@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+
+    /* Preact Config */
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "skipLibCheck": true,
+    "paths": {
+      "react": ["./node_modules/preact/compat/"],
+      "react-dom": ["./node_modules/preact/compat/"],
+      "@router": ["./src/routing/router.jsx"],
+      "@router/*": ["./src/routing/*"]
+    }
+  },
+  "include": ["node_modules/vite/client.d.ts", "**/*"]
+}

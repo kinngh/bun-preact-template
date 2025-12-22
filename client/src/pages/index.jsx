@@ -1,17 +1,18 @@
-import { useEffect } from "preact/hooks";
+import useRouter from "@router";
 
 const HomePage = () => {
-  async function getData() {
-    const res = await (await fetch("/api/test")).json();
-    console.dir(res, { depth: null });
-  }
+  const router = useRouter();
 
-  useEffect(() => {
-    getData();
-  }, []);
   return (
     <>
       <p>This is some content for the home page</p>
+      <button
+        onClick={() => {
+          router.push("/shoppy/route");
+        }}
+      >
+        Route
+      </button>
     </>
   );
 };

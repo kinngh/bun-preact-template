@@ -1,7 +1,7 @@
 import { serve } from "bun";
 import fs from "fs/promises";
 import path from "path";
-import { pathToFileURL } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -24,7 +24,14 @@ const routes = { GET: {}, POST: {}, PUT: {}, DELETE: {}, PATCH: {} };
 
 // ----- ROUTE REGISTRATION
 
-const routeRoot = path.join(process.cwd(), "routes");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const routeRoot = path.join(__dirname, "routes");
+
+// Vite Preact build output: client/dist
+const CLIENT_DIST_DIR = path.join(__dirname, "..", "client", "dist");
+const INDEX_HTML_PATH = path.join(CLIENT_DIST_DIR, "index.html");
 
 /**
  * Build a route path from a base path.
@@ -97,7 +104,7 @@ export function withMiddleware(...fns) {
     }
 
     const final = await /** @type {RouteHandler} */ (fns[fns.length - 1])(
-      current
+      current,
     );
     if (!(final instanceof Response))
       throw new Error("Final handler must return Response");
@@ -121,7 +128,7 @@ function matchRoute(pathStr, method) {
 
   // Sort: static first, dynamic last
   routeKeys.sort(
-    (a, b) => (a.includes(":") ? 1 : 0) - (b.includes(":") ? 1 : 0)
+    (a, b) => (a.includes(":") ? 1 : 0) - (b.includes(":") ? 1 : 0),
   );
 
   for (const route of routeKeys) {
@@ -153,10 +160,6 @@ function matchRoute(pathStr, method) {
 }
 
 // ----- STATIC FRONTEND / SPA SETUP
-
-// Vite Preact build output: client/dist
-const CLIENT_DIST_DIR = path.join(process.cwd(), "client", "dist");
-const INDEX_HTML_PATH = path.join(CLIENT_DIST_DIR, "index.html");
 
 /** Very small mime map for common frontend assets. */
 const MIME_TYPES = {

@@ -47,7 +47,7 @@ function toLazyModule(loader) {
 
 function RouterView() {
   const entries = Object.entries(pageImports).filter(
-    ([key]) => !key.includes("/pages/api/")
+    ([key]) => !key.includes("/pages/api/"),
   );
 
   const notFoundEntry = entries.find(([key]) => /\/404\.(t|j)sx$/.test(key));

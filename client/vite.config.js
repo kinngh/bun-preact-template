@@ -9,7 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@router": fileURLToPath(
-        new URL("./src/routing/router.jsx", import.meta.url)
+        new URL("./src/routing/router.jsx", import.meta.url),
       ),
       "@router/": fileURLToPath(new URL("./src/routing/", import.meta.url)),
     },
@@ -17,11 +17,10 @@ export default defineConfig({
   server: {
     ...(isDev && {
       proxy: {
-        //To Do
-        // "/api": {
-        //   target: "http://localhost:3000",
-        //   changeOrigin: true,
-        // },
+        "/api": {
+          target: "http://localhost:3000",
+          changeOrigin: true,
+        },
       },
     }),
   },

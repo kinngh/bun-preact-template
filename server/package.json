@@ -1,12 +1,13 @@
 {
   "name": "bun-server",
-  "version": "2025.12.16",
+  "version": "2025.12.22",
   "description": "",
   "main": "index.js",
   "scripts": {
     "update": "ncu -u",
     "pretty": "prettier --write ./",
-    "dev": "bun --hot index.js"
+    "dev": "bun --hot index.js",
+    "start": "bun index.js"
   },
   "dependencies": {
     "kysely": "^0.28.8",

@@ -3,7 +3,7 @@ import { PlanetScaleDialect } from "kysely-planetscale";
 
 const url = process.env.DATABASE_URL || "";
 const match = url.match(
-  /^mysql:\/\/(?<username>[^:]+):(?<password>[^@]*)@(?<host>[^:/]+)(?::(?<port>\d+))?\/(?<database>.+)$/
+  /^mysql:\/\/(?<username>[^:]+):(?<password>[^@]*)@(?<host>[^:/]+)(?::(?<port>\d+))?\/(?<database>.+)$/,
 );
 
 if (!match) {

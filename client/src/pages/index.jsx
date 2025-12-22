@@ -3,6 +3,11 @@ import useRouter from "@router";
 const HomePage = () => {
   const router = useRouter();
 
+  async function getData() {
+    const res = await (await fetch("/api/test")).json();
+    console.dir(res, { depth: null });
+  }
+
   return (
     <>
       <p>This is some content for the home page</p>
@@ -12,6 +17,13 @@ const HomePage = () => {
         }}
       >
         Route
+      </button>
+      <button
+        onClick={async () => {
+          await getData();
+        }}
+      >
+        Get Data
       </button>
     </>
   );

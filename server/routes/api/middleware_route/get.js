@@ -7,7 +7,7 @@ import logMethodMiddleware from "@/middleware/logMethodMiddleware";
 async function handler(request) {
   return new Response(
     JSON.stringify({ message: "Hello from GET /api/example" }),
-    { headers: { "Content-Type": "application/json" } }
+    { headers: { "Content-Type": "application/json" } },
   );
 }
 

@@ -4,6 +4,7 @@
   "workspaces": {
     "": {
       "dependencies": {
+        "@attayjs/client": "^0.0.1",
         "preact": "^10.25.3",
         "preact-iso": "^2.11.0",
       },
@@ -16,6 +17,8 @@
     },
   },
   "packages": {
+    "@attayjs/client": ["@attayjs/client@0.0.1", "", { "peerDependencies": { "preact": ">=10", "preact-iso": ">=2" } }, "sha512-JD0HpGacE67+yQT+QYP11SprfzvqTA3uA0s8+XLCIo/B/YyMurvuN096Y3NchB0+p6LscQL0byo6NlJqrczehg=="],
+
     "@babel/code-frame": ["@babel/code-frame@7.27.1", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.27.1", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg=="],
 
     "@babel/compat-data": ["@babel/compat-data@7.28.5", "", {}, "sha512-6uFXyCayocRbqhZOB+6XcuZbkMNimwfVGFji8CTZnCzOHVGvDqzvitu1re2AU5LROliz7eQPhB8CpAMvnx9EjA=="],

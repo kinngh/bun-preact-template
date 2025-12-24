@@ -9,6 +9,7 @@
     "pretty": "prettier --write ./"
   },
   "dependencies": {
+    "@attayjs/client": "^0.0.1",
     "preact": "^10.25.3",
     "preact-iso": "^2.11.0"
   },

@@ -1,4 +1,4 @@
-import { useRouter } from "@router";
+import { useRouter } from "@attayjs/client";
 import { useEffect } from "preact/hooks";
 
 const ThisIsARoute = () => {

@@ -1,6 +1,6 @@
 {
   "name": "bun-server",
-  "version": "2025.12.22",
+  "version": "2025.12.29",
   "description": "",
   "main": "index.js",
   "scripts": {

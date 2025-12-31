@@ -10,13 +10,13 @@
   },
   "dependencies": {
     "@attayjs/client": "^0.0.1",
-    "preact": "^10.25.3",
-    "preact-iso": "^2.11.0"
+    "preact": "^10.28.1",
+    "preact-iso": "^2.11.1"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.9.3",
+    "@preact/preset-vite": "^2.10.2",
     "npm-check-updates": "^19.2.0",
     "prettier": "^3.7.4",
-    "vite": "^6.0.4"
+    "vite": "^7.3.0"
   }
 }
